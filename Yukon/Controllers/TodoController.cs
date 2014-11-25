@@ -26,8 +26,16 @@ namespace Yukon.Controllers
     
         public async Task<JsonResult> GetAll()
         {
-            var all = await TodoService.GetAll();
+            var all = await TodoService.GetAllTitles();
             return Json(all, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> Delete(int index)
+        {
+            await TodoService.Delete(index);
+
+            return Json("Success");
         }
 
         [HttpPost]

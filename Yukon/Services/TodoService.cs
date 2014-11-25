@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Yukon.Models;
 
 namespace Yukon.Services
 {
@@ -19,29 +20,39 @@ namespace Yukon.Services
 
         public async Task AddTodo(string todo)
         {
-            using (var file = new StreamWriter(_fileLocation, append: true))
-            {
-                await file.WriteLineAsync(todo);
-                file.Close();
-            }
+            var list = await ReadFile();
+            list.Todos.Add(new Todo {Title = todo});
+            await WriteFile(list);
         }
 
-        public async Task<List<string>> GetAll()
+        public async Task<TodoList> GetAll()
         {
-            List<string> todos = new List<string>();
-            using (var file = new StreamReader(_fileLocation))
-            {
-                string line;
-                while ((line = await file.ReadLineAsync()) != null)
-                {
-                    todos.Add(line);
-                }
+            return await ReadFile();
+        }
 
-                file.Close();
-            }
+        public async Task<List<string>> GetAllTitles()
+        {
+            var list = await GetAll();
+            return list.Todos.Select(t => t.Title).ToList();
+        }
 
-            return todos;
+        public async Task Delete(int index)
+        {
+            var list = await ReadFile();
+            list.Todos.RemoveAt(index);
+            await WriteFile(list);
+        }
 
+        private async Task<TodoList> ReadFile()
+        {
+            var s = await Task.Run(() => File.ReadAllLines(_fileLocation).ToList());
+
+            return new TodoList {Todos = s.Select(t => new Todo {Title = t}).ToList()};
+        }
+
+        private async Task WriteFile(TodoList list)
+        {
+            await Task.Run(() => File.WriteAllLines(_fileLocation, list.Todos.Select(t => t.Title).ToArray()));
         }
 
         private static readonly string _fileLocation =
