@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Newtonsoft.Json;
 using Yukon.Models;
 
 namespace Yukon.Services
@@ -45,14 +46,32 @@ namespace Yukon.Services
 
         private async Task<TodoList> ReadFile()
         {
-            var s = await Task.Run(() => File.ReadAllLines(_fileLocation).ToList());
+            var json = await Task.Run(() => File.ReadAllText(_fileLocation));
 
-            return new TodoList {Todos = s.Select(t => new Todo {Title = t}).ToList()};
+            TodoList retVal = null;
+
+            try
+            {
+                retVal = JsonConvert.DeserializeObject<TodoList>(json);
+            }
+            catch
+            {
+                
+            }
+
+            if (retVal == null)
+            {
+                retVal = new TodoList {Todos = new List<Todo>()};
+            }
+
+            return retVal;
         }
 
         private async Task WriteFile(TodoList list)
         {
-            await Task.Run(() => File.WriteAllLines(_fileLocation, list.Todos.Select(t => t.Title).ToArray()));
+            var json = JsonConvert.SerializeObject(list);
+
+            await Task.Run(() => File.WriteAllText(_fileLocation, json));
         }
 
         private static readonly string _fileLocation =
