@@ -7,12 +7,25 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pindu</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <meta name="description" content="oPINionated Todoing" />
 </head>
-<body>
-    <div>
+<body data-ng-app="app">
+    <div class="container" data-ng-controller="todoController">
+        <h1 class="row">TODOs</h1>
+        @*<div data-ng-repeat="todo in todos" class="row">
+            <span class="col-md-4">{{todo.title}}</span>
+        </div>*@
         yo 
     </div>
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/appscripts")
 </body>
 </html>

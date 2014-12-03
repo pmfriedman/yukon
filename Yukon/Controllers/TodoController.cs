@@ -24,10 +24,11 @@ namespace Yukon.Controllers
             return View();
         }
     
+        [HttpPost]
         public async Task<JsonResult> GetAll()
         {
             var all = await TodoService.GetAllTitles();
-            return Json(all, JsonRequestBehavior.AllowGet);
+            return Json(all);
         }
 
         [HttpPost]
